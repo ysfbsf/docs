@@ -1,0 +1,53 @@
+---
+title: 'FLEDGE Integration - Missena Native'
+description: 'Guide for integrating Missena Native with FLEDGE through Prebid.js'
+---
+
+## Overview
+
+This guide outlines the steps required to integrate Missena Native with FLEDGE through Prebid.js. It provides a comprehensive approach for enabling FLEDGE in Google Ad Manager (GAM) and configuring Prebid.js to support Missena Native as a bidder in FLEDGE auctions.
+
+## Requirements
+
+Before proceeding with the integration, ensure you have the following:
+
+- FLEDGE module integrated with Prebid.js
+- FLEDGE enabled within Google Ad Manager
+
+## Integration Guide
+
+Follow these steps to integrate Missena Native with FLEDGE:
+
+### 1. Declare Missena Native as an Alias
+
+Start by declaring Missena Native as an alias of Criteo within the Prebid.js configuration. This step involves specifying the Global Vendor List ID (gvlid) for Missena Native:
+
+```javascript
+pbjs.aliasBidder("criteo", "missenanative", { gvlid: 91 });
+```
+
+### 2. Configure FLEDGE Participation
+
+Include Missena Native in the list of bidders allowed to participate in FLEDGE auctions. This configuration also enables FLEDGE and sets a default value for slot configuration:
+
+```javascript
+pbjs.setBidderConfig({
+  bidders: ["openx", "criteo", "missenanative"],
+  config: {
+    fledgeEnabled: true,
+    defaultForSlots: 1,
+  },
+});
+```
+
+<Note>
+  Ensure that "missenanative" is included in the `bidders` array to allow Missena Native to participate in FLEDGE auctions.
+</Note>
+
+## Additional Considerations
+
+- Make sure that FLEDGE is properly enabled and configured in your Google Ad Manager account.
+- Test the integration thoroughly to ensure that Missena Native is participating correctly in FLEDGE auctions.
+- Monitor performance and adjust configurations as needed for optimal results.
+
+For more detailed information on FLEDGE and Prebid.js integration, refer to the official Prebid.js documentation.
