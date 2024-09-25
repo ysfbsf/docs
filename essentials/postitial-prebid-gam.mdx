@@ -1,0 +1,127 @@
+title: 'Postitial Integration - Prebid & Google Ad Manager'
+description: 'Guide for integrating Missena Postitial Format with Prebid and Google Ad Manager'
+---
+
+## Overview
+
+This guide outlines the process of integrating Missena Postitial Format with Prebid and Google Ad Manager. The integration is based on the Prebid.js library and the Google Ad Manager ad server.
+
+## Requirements
+
+Before you begin, ensure you have:
+
+1. Prebid installed on your site and configured to use Google Ad Manager as the ad server.
+2. A Postitial Ad Unit created in Google Ad Manager with the following sizes:
+   - 320x480
+   - 300x250
+   - 336x280
+
+<img src="/images/postitial-gam.png" alt="Postitial Ad Unit in Google Ad Manager" />
+
+## Integration Steps
+
+### 1. Include Missena Bid Adapter
+
+Include the Missena Bid Adapter in your prebid javascript file. You can download the new prebid.js from the [official Prebid website](https://docs.prebid.org/download.html).
+
+### 2. Configure Google Ad Manager
+
+In Google Ad Manager, include the Postitial ad unit in the list of ad units targeted by the Prebid line items. Ensure that GAM can serve the Prebid GAM creative to the Postitial ad unit.
+
+### 3. Disable SafeFrame
+
+Uncheck the "Serve into a SafeFrame" option in your Prebid GAM creative:
+
+<img src="/images/safeframe.png" alt="SafeFrame Option" />
+
+### 4. Declare Postitial Ad Unit
+
+Declare the Postitial ad unit in the Google Ad Manager GPT code:
+
+```javascript
+googletag.cmd.push(function () {
+    // Define the Postitial ad unit
+    googletag.defineOutOfPageSlot('<GAM_ADUNIT_CODE>', googletag.enums.OutOfPageFormat.INTERSTITIAL).addService(googletag.pubads());
+    googletag.pubads().enableSingleRequest();
+    googletag.enableServices();
+});
+```
+
+<Note>
+Replace `<GAM_ADUNIT_CODE>` with the ad unit code of the postitial format.
+</Note>
+
+### 5. Add Postitial Ad Unit to Prebid
+
+Add the postitial ad unit to Prebid configuration:
+
+```javascript
+var adUnits = [{
+    code: 'postitial',
+    mediaTypes: {
+        banner: {
+            sizes: [
+                [320, 480],
+                [300, 250],
+                [336, 280]
+            ]
+        }
+    },
+    bids: [{
+        bidder: "missena",
+        params: {
+            apiKey: "PA-XXXXXXXX",
+            placement: "postitial",
+            custom: {
+                providerName: "bidule",
+            },
+        },
+    }]
+}];
+```
+
+<Note>
+Contact your Missena representative to obtain your API Key.
+</Note>
+
+### 6. Set Targeting for GPT
+
+Add the following code just after the `pbjs.setTargetingForGPTAsync()` call:
+
+```javascript
+pbjs.setTargetingForGPTAsync('postitial', function(slot){
+    return function() {
+        return slot.getSlotElementId().includes("<GAM_ADUNIT_CODE>");
+    }
+});
+```
+
+Replace `<GAM_ADUNIT_CODE>` with the name of your interstitial ad unit.
+
+Example:
+
+```javascript
+googletag.cmd.push(function() {
+    pbjs.que.push(function() {
+        pbjs.setTargetingForGPTAsync();
+        pbjs.setTargetingForGPTAsync('postitial', function(slot){
+            return function() {
+                return slot.getSlotElementId().includes("/1234567/Postitial");
+            }
+        });
+        googletag.pubads().refresh();
+    });
+});
+```
+
+### 7. Add Postitial Div
+
+Add the following div to your page:
+
+```html
+<div id="postitial" style="display: none;"></div>
+```
+
+## Conclusion
+
+By following these steps, you should have successfully integrated the Missena Postitial Format with Prebid and Google Ad Manager. If you encounter any issues or have questions, please contact your Missena representative for support.
