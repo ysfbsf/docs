@@ -42,7 +42,8 @@
         "essentials/s2s-prebid-integration",
         "essentials/ads-txt",
         "essentials/demo-tools",
-        "essentials/fledge"
+        "essentials/fledge",
+        "essentials/astech-provider-config"
       ]
     }
   ],
